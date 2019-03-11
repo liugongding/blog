@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>layout 后台大布局 - Layui</title>
+  <link rel="stylesheet" href="../dist/css/layui.css">
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo">后台布局</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item"><a href="">控制台</a></li>
+      <li class="layui-nav-item"><a href="">商品管理</a></li>
+      <li class="layui-nav-item"><a href="">用户</a></li>
+      <li class="layui-nav-item">
+        <!-- 引用一个js，有下拉列表 -->
+        <a href="javascript:;">其它系统</a>
+        <dl class="layui-nav-child">
+          <dd><a href="">邮件管理</a></dd>
+          <dd><a href="">消息管理</a></dd>
+          <dd><a href="">授权管理</a></dd>
+        </dl>
+      </li>
+    </ul>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+          顶顶
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退出</a></li>
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">博客管理</a>
+          <dl class="layui-nav-child">
+          <dd><a href="../view/backstage.html">首页</a></dd>
+          <dd><a href="../view/addblog.html">添加文章</a></dd>
+          </dl>
+        </li>
+      </ul>
+      
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">用户管理</a>
+          <dl class="layui-nav-child">
+            <dd><a href="">修改密码</a></dd>
+            <dd><a href="">增加管理员</a></dd>
+          </dl>
+        </li>
+      </ul>
+      
+    </div>
+  </div>
+  
+  
+  <div style="text-align: center;">
+  <div class="layui-inline">
+    <table id="blog" lay-filter="demo"></table>
+   </div>
+</div>
+
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+ 
+</div>
+<script src="../dist/layui.js"></script>
+<script type="text/javascript">
+	layui.use(['layedit', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element','jquery'], function(){
+	  var layedit = layui.layedit 
+	  ,laypage = layui.laypage //分页
+	  ,table = layui.table //表格
+	  ,upload = layui.upload //上传
+	  ,element = layui.element //元素操作
+	  ,$ = layui.jquery
+	  ,layer = layui.layer;
+	  
+	  var index = layedit.build('demo');
+	  
+		//执行一个 table 实例
+		  table.render({
+		    elem: '#blog'
+		    ,height: 332
+		    ,width:900
+		    ,url: '/blog/test/list' //数据接口
+		    ,page: true //开启分页
+		    ,cols: [[ //表头
+		      {field: 'id', title: 'ID', width:100, sort: true, align:'center'}
+		      ,{field: 'time', title: '发表时间', width:150, align:'center'}
+		      ,{field: 'name', title: '作者', width:100, align:'center'}
+		      ,{field: 'title', title: '标题', width:100, align:'center'}
+		      ,{field: 'articles', title: '文章内容', width:300,align:'center'}
+		      ,{fixed: 'right', width: 200, align:'center', toolbar: '#barDemo'}
+		    ]]
+		  });
+	//监听工具条
+	  table.on('tool(demo)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+	    var data = obj.data //获得当前行数据
+	    ,layEvent = obj.event; //获得 lay-event 对应的值
+	    var Id = JSON.stringify(data['id']);
+	  
+	    if(layEvent === 'detail'){
+	      //layer.msg('查看操作');
+	    	$.ajax({
+	    		url:"/blog/Articles/getDetails",
+	    		type:"post",
+				data:{"id":Id,},
+	    		success:function(result) {
+        		if (result=="success") {
+        			layer.msg("id");
+        			window.location.href="/blog/view/getBlogById.html?id="+Id;//需要跳转的地址
+        		} if (result=="false") {
+        			layer.msg("检查路径");		
+        		}
+        		}
+	    	});
+	    } else if(layEvent === 'del'){
+	      layer.confirm('真的删除行么', function(index){
+	        //obj.del(); //删除对应行（tr）的DOM结构
+	        //向服务端发送删除指令
+	     	   $.ajax({
+	        	type:"post",
+	        	url:"/blog/test/delete",
+	        	beforeSend :function(xmlHttp){ 
+				        xmlHttp.setRequestHeader("If-Modified-Since","0"); 
+				        xmlHttp.setRequestHeader("Cache-Control","no-cache");
+				     },
+	        	data:{
+	        		"id":Id,
+	        	},
+	        	success:function(result) {
+	        		if (result=="success") {
+	        			layer.confirm("刪除成功");
+	        			location.reload();
+	        		} if (result=="false") {
+	        			layer.msg("删除失败");
+	        		}
+	        	}
+	        })
+	        
+	      });
+	    } else if(layEvent === 'edit'){
+	      layer.msg('编辑操作');
+	    }
+	  });
+	});
+</script>
+</body>
+</html>

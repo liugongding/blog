@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.BlogCommentDAO">
+
+	<insert id="addComment">
+		insert into comments
+		(id,words,name,articleId)
+		values(#{id},#{words},#{name},#{articleId})
+	</insert>
+	
+	<select id="getCount" resultType="int">
+		select count(*) from comments
+	</select>
+
+	<select id="listComment" resultType="BlogComment" parameterType="java.util.Map">
+		select words, name from comments 
+		where articleId = #{id}
+		<if test="start!=null and count!=null">
+   			limit #{start},#{count}
+   		</if>
+	</select>
+</mapper>

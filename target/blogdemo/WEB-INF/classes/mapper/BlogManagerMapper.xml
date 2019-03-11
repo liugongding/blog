@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.BlogManagerDAO">
+
+	 <!-- id为具体实现接口中的方法名-->
+    <insert id="addBlogType" parameterType="BlogArticles" keyProperty="id" useGeneratedKeys="true">
+        insert into articles values(null,#{time},#{name},#{title},#{articles},null)
+    </insert>
+    
+    <update id="updateBlogType" parameterType="BlogArticles">
+        update blog
+        <set >
+            <if test="typeName!=null and typeName!=''">
+                name = #{name},
+            </if>
+            <if test="orderNum!=null and orderNum!=''">
+                blog = #{articles},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+     <delete id="deleteBlogType" parameterType="java.lang.Integer">
+        DELETE FROM articles where id=#{id}
+    </delete>
+    
+    <select id="getById" parameterType="java.lang.Integer" resultType="BlogArticles" >
+        SELECT id,name,articles from articles
+            where id = #{id}
+    </select>
+    
+    <select id="listByPage" resultType="BlogArticles">
+       SELECT id,time,name,title,articles from articles
+          limit #{param1}, #{param2}
+    </select>
+    
+    <select id="getTotal" resultType="int">
+    	select count(*) from articles
+    </select>
+</mapper>

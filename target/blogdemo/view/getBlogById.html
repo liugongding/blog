@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../res/layui/css/layui.css">
+	<link rel="stylesheet" href="../res/static/css/mian.css">
+<title>Insert title here</title>
+</head>
+<body class="lay-blog">
+		<div class="header"></div>
+		<div class="container-wrap">
+			<div class="container">
+					<div class="contar-wrap">
+						<h4 class="item-title">
+							<p><i class="layui-icon layui-icon-speaker"></i>公告：<span>欢迎来到我的轻博客</span></p>
+						</h4>
+						<div class="item" id="blog">
+							<div class="item-box  layer-photos-demo1 layer-photos-demo">
+							</div>
+						</div>
+					</div>
+			</div>
+			<div align="center">
+			<a class="layui-btn layui-btn-primary"  href="/blog/view/backstage.html" >返回</a>
+			</div>
+		</div>
+		
+		<div class="footer">
+			<p>
+				<span>&copy; 2018</span>
+				<span><a href="http://www.layui.com" target="_blank">layui.com</a></span> 
+				<span>MIT license</span>
+			</p>
+			<p><span>人生就是一场修行</span></p>
+		</div>
+			<script src="../dist/layui.js"></script>
+			<script src="../jquery/jquery-2.1.1.min.js"></script>
+			<script src="../jquery/jquery.js"></script>
+		<script type="text/javascript">
+		layui.use(['jquery','laypage','layer'],function(){
+			var $ = layui.jquery,
+			laypage = layui.laypage,
+			layer = layui.layer;
+			$(document).ready(function(){
+				function GetQueryString(name)
+				{
+				     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+				     var r = window.location.search.substr(1).match(reg);
+				     if(r!=null)return  unescape(r[2]); return null;
+				}
+				Id = GetQueryString("id");
+				$.ajax({
+					url:"/blog/Articles/getBlogById",
+					type:"post",
+					dataType:"json",
+					data:{"id":Id,},
+					success:function(data) {
+						var result = data.blog;
+						var html="";
+						var id = result.id;
+						var title = result.title;
+						var name = result.name;
+						var time = result.time; 
+						var articles = result.articles;
+						html += '<div class="item" style="margin:10px;">'
+							+'<div class="item-box  layer-photos-demo1 layer-photos-demo">'
+								+'<h3>'+title+'</h3>'
+								+'<div class="comment count">'
+								+'<h5>发布于：<span>'+time+'</span></h5>'
+								+'<h5>作者：<span>'+name+'</span></h5>'
+								+'</div>'
+								+'<p>'+articles+'</p>'
+								+'<img src="../res/static/images/item.png" alt="">'
+							+'</div>'
+							+'</div>'
+						+'</div>'
+						$(".item").html(html);
+					}
+					});
+				});
+			});
+		</script>
+</body>
+</html>
