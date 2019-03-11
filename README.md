@@ -3,7 +3,7 @@
 # 实现功能
 分页展示、文件上传、登陆拦截、评论留言。
 # 技术栈
-前端：html+css+jquery
+前端：html+css+jquery  
 后端：spring+springMVC+mybatis
 IDE：eclipse
 # 项目展示
